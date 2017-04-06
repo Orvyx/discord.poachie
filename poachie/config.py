@@ -8,3 +8,7 @@ RULES = (
 	"first", 
 	"second" """etc"""
 )
+CHANNELS_EXCEPTION = ( """channel IDs for permanent channels go here (to not be deleted by the bot)"""
+	'',
+	''
+)

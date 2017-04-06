@@ -26,14 +26,22 @@ async def on_message(message):
 @client.event
 async def on_voice_state_update(before, after):
     if after.voice.voice_channel == client.get_channel(config.CHANNEL_BOT):
-        if(str(after.nick) == 'None'):
+        if str(after.nick) == 'None':
             channelName = str(after) + "\'s Channel"
         else:
             channelName = str(after.nick) + "\'s Channel"
         newChannel = await client.create_channel(after.server, channelName, type=discord.ChannelType.voice)
         await client.move_member(after, newChannel)
-    if len(before.voice.voice_channel.voice_members) == 0 and before.voice.voice_channel.id != config.CHANNEL_BOT and before.voice.voice_channel.id != config.CHANNEL_AFK:
+    if len(before.voice.voice_channel.voice_members) == 0 and not channel_exception(before.voice.voice_channel.id):
         await client.delete_channel(before.voice.voice_channel)
     return
 
+def channel_exception(channel_id):
+    if channel_id == config.CHANNEL_BOT or channel_id == config.CHANNEL_AFK:
+        return True
+    elif len(config.CHANNELS_EXCEPTION) > 0:
+        for temp_id in config.CHANNELS_EXCEPTION:
+            if channel_id == temp_id:
+                return True
+    return False
 client.run(config.BOT_TOKEN)
